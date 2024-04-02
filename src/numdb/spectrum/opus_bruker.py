@@ -1,6 +1,6 @@
 from brukeropusreader import read_file
 from pathlib import Path
-from .spectrum import XAxisType, Spectrum
+from .enums import XAxisType, Spectrum
 from pandas import Series
 import numpy as np
 from numpy import typing as npt

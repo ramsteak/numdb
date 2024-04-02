@@ -1,5 +1,5 @@
 from pathlib import Path
-from .spectrum import XAxisType, Spectrum
+from .enums import XAxisType, Spectrum
 from pandas import Series, read_csv
 import numpy as np
 from io import StringIO

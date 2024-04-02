@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 from pandas import Series
-from .spectrum import Spectrum, XAxisType
+from .enums import Spectrum, XAxisType
 from typing import Callable
 
 _registered_filetypes: dict[str, FileType] = {}

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 from pandas import Series, Index
-from .spectrum import Spectrum, XAxisType
+from .enums import Spectrum, XAxisType
 from ..exceptions import ReadError
 from .filetypes import FileType, _registered_filetypes
 from numpy import typing as npt
