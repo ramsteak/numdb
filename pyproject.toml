@@ -7,7 +7,7 @@ packages = ["src/numdb"]
 
 [project]
 name = "numdb"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="ramsteak", email="ramsteak.git@gmail.com" },
 ]
@@ -18,6 +18,10 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+]
+dependencies = [
+  "pandas",
+  "brukeropusreader"
 ]
 
 [project.urls]
