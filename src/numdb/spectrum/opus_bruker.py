@@ -41,8 +41,10 @@ def read(
     D[abs(D) > nan_cutoff] = np.nan
     return Series(D, index=N, name=name), XAxisType.Wavenumber_cm
 
+
 def meta(fp: Path, name: str, **kw):
     ...
+
 
 ftype = FileType("opus", None, read, meta, lambda x: x.removeprefix(".").isnumeric())
 register_filetype(ftype)

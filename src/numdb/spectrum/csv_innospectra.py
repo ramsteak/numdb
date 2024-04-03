@@ -43,8 +43,10 @@ def read(fp: Path, name: str, mode: Spectrum, **kw) -> tuple[Series, XAxisType] 
 
     return Series(data=A, index=N, name=name), XAxisType.Wavelength_nm
 
+
 def meta(fp: Path, name: str):
     ...
+
 
 ftype = FileType("inno_spectra", [".csv"], read, meta)
 register_filetype(ftype)
