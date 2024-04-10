@@ -9,6 +9,56 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 
+def _spectrum_conversion(
+    sp: Series, xaxis0: XAxisType, xaxis1: XAxisType, copy: bool = False
+) -> Series:
+    s = sp.copy() if copy else sp
+
+    if (xaxis1 == XAxisType.Unknown) or (xaxis0 == XAxisType.Unknown):
+        return s
+
+    X = s.index
+    xa0, xa1 = xaxis0.value, xaxis1.value
+
+    if xa0 != xa1:
+        # inversion
+        if (xa0 > 50) and (xa1 < 50):
+            X = 1 / X
+            xa0 -= 100
+        elif (xa0 < 50) and (xa1 > 50):
+            X = 1 / X
+            xa0 += 100
+
+    if xa0 != xa1:
+        # alignment
+        diff = -(xa1 - xa0)
+        X *= 10**diff
+
+    s.index = X
+    return s
+
+
+def _round_spectrum(
+    sp: Series, roundx: int | None, roundy: int | None, copy: bool = False
+) -> Series:
+    s = sp.copy() if copy else sp
+
+    if roundx is not None:
+        s.index = np.round(s.index, roundx)  # type: ignore
+    if roundy is not None:
+        s = s.round(roundy)
+
+    return s
+
+
+def _interpolate_spectrum(
+    sp: Series, xvalues: npt.ArrayLike, kind: str = "linear"
+) -> Series:
+    interp = interp1d(sp.index.values, sp.values, kind=kind, fill_value="extrapolate")  # type: ignore
+    s = Series(interp(xvalues), index=Index(xvalues), name=sp.name)  # type: ignore
+    return s
+
+
 def _read_auto(
     fp: Path, name: str, mode=Spectrum.AB, filetype: None | str | FileType = None, **kw
 ) -> tuple[Series, XAxisType]:
@@ -57,35 +107,14 @@ def read_spectrum(
 ) -> Series:
     s, curr_xaxis = _read_auto(fp, name, mode, filetype, **kw)
 
-    # X axis conversions
-    curr_xexp = curr_xaxis.value
-    desr_xexp = xaxis.value
+    # x axis conversion
+    s = _spectrum_conversion(s, curr_xaxis, xaxis)
 
-    X = s.index
-
-    if curr_xexp != desr_xexp:
-        # unit inversion
-        if curr_xexp > 50 and curr_xexp < 50:
-            X = 1 / X
-            curr_xexp -= 100
-        elif curr_xexp < 50 and curr_xexp > 50:
-            X = 1 / X
-            curr_xexp += 100
-
-        # unit alignment
-        if curr_xexp != desr_xexp:
-            diff = -(desr_xexp - curr_xexp)
-            X *= 10**diff
-
-    # X axis interpolation
+    # spectrum interpolation
     if xinterp is not None:
-        interp = interp1d(s.index.values, s.values, kind=interp_kind, fill_value="extrapolate")  # type: ignore
-        s = Series(interp(xinterp), index=Index(xinterp), name=s.name)  # type: ignore
+        s = _interpolate_spectrum(s, xinterp, interp_kind)
 
-    # X, Y axis rounding
-    if roundx is not None:
-        s.index = np.round(s.index, roundx)  # type: ignore
-    if roundy is not None:
-        s = s.round(roundy)
+    # x axis rounding
+    s = _round_spectrum(s, roundx, roundy)
 
     return s
