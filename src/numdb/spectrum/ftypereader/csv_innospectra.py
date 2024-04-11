@@ -6,7 +6,10 @@ from io import StringIO
 from ..conversions import spectrum_conversion
 from ..filetypes import FileType
 
-def read(fp: Path, name: str, mode: Spectrum, xaxis: XAxisType = XAxisType.Unknown, **kw) -> Series | None:
+
+def read(
+    fp: Path, name: str, mode: Spectrum, xaxis: XAxisType = XAxisType.Unknown, **kw
+) -> Series | None:
     match mode:
         case Spectrum.AB:
             modestr = "Absorbance (AU)"
@@ -46,7 +49,9 @@ def read(fp: Path, name: str, mode: Spectrum, xaxis: XAxisType = XAxisType.Unkno
     return s
 
 
-def meta(fp: Path, name: str, mode: Spectrum, xaxis= XAxisType.Unknown, **kw) -> Series | None:
+def meta(
+    fp: Path, name: str, mode: Spectrum, xaxis=XAxisType.Unknown, **kw
+) -> Series | None:
     ...
 
 

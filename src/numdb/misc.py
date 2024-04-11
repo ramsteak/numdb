@@ -6,6 +6,7 @@ _T = TypeVar("_T")
 _K = TypeVar("_K")
 _V = TypeVar("_V")
 
+
 def dict_merge(*ds: dict[_K, _V]) -> dict[_K, _V]:
     """Merges the dicts into a single dict, keeping the priority in the order
     they are specified"""
@@ -13,6 +14,7 @@ def dict_merge(*ds: dict[_K, _V]) -> dict[_K, _V]:
     for d in reversed(ds):
         merged.update(d)
     return merged
+
 
 def get_first(
     property: str,

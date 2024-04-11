@@ -6,7 +6,6 @@ import numpy as np
 from scipy.interpolate import interp1d
 
 
-
 def spectrum_conversion(
     sp: Series, xaxis0: XAxisType, xaxis1: XAxisType, copy: bool = False
 ) -> Series:
@@ -49,7 +48,9 @@ def round_spectrum(
     return s
 
 
-def interpolate_spectrum(sp: Series, xvalues: npt.ArrayLike, interp_kind: str) -> Series:
+def interpolate_spectrum(
+    sp: Series, xvalues: npt.ArrayLike, interp_kind: str
+) -> Series:
     interp = interp1d(sp.index.values, sp.values, kind=interp_kind, fill_value="extrapolate")  # type: ignore
     s = Series(interp(xvalues), index=Index(xvalues), name=sp.name)  # type: ignore
     return s

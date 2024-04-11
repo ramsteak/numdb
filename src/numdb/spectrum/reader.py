@@ -23,7 +23,7 @@ _read_defaults: dict[str, Any] = {
 def _read_auto(
     fp: Path,
     name: str,
-    mode:Spectrum,
+    mode: Spectrum,
     filetype: None | str | FileType = None,
     **kw,
 ) -> Series:
@@ -61,17 +61,18 @@ def _read_auto(
 def read_spectrum(
     fp: Path,
     name: str,
-    mode: Spectrum = Spectrum.AB,*,
+    mode: Spectrum = Spectrum.AB,
+    *,
     filetype: FileType | str = "auto",
     **kw,
 ) -> Series:
     s = _read_auto(fp, name, mode, filetype, **kw)
 
     _set = dict_merge(kw, _read_defaults)
-    
+
     s = round_spectrum(s, _set.get("roundx"), _set.get("roundy"))
-    
+
     if "xvalues" in _set:
-        s = interpolate_spectrum(s, _set.get("xvalues"), _set.get("interp_kind")) # type: ignore
-    
+        s = interpolate_spectrum(s, _set.get("xvalues"), _set.get("interp_kind"))  # type: ignore
+
     return s

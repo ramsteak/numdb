@@ -33,7 +33,13 @@ def _get_modestr(mode: Spectrum) -> str:
 
 
 def read(
-    fp: Path, name: str, mode: Spectrum = Spectrum.AB, *, xaxis= XAxisType.Unknown, nan_cutoff: int = 5, **kw
+    fp: Path,
+    name: str,
+    mode: Spectrum = Spectrum.AB,
+    *,
+    xaxis=XAxisType.Unknown,
+    nan_cutoff: int = 5,
+    **kw,
 ) -> Series | None:
     """The function reads the file using the brukeropusreader library and returns
     the read spectrum as a series, with the XAxisType."""
@@ -67,4 +73,6 @@ def meta(fp: Path, name: str, mode: Spectrum = Spectrum.AB, **kw) -> Series | No
     return Series()
 
 
-opus_ftype = FileType("opus", None, read, meta, lambda x: x.removeprefix(".").isnumeric())
+opus_ftype = FileType(
+    "opus", None, read, meta, lambda x: x.removeprefix(".").isnumeric()
+)
