@@ -1,12 +1,12 @@
 from pathlib import Path
-from .enums import XAxisType, Spectrum
+from ..enums import XAxisType, Spectrum
 from pandas import Series, read_csv
 import numpy as np
 from io import StringIO
-from .filetypes import register_filetype, FileType
+from ..conversions import spectrum_conversion
+from ..filetypes import FileType
 
-
-def read(fp: Path, name: str, mode: Spectrum, **kw) -> tuple[Series, XAxisType] | None:
+def read(fp: Path, name: str, mode: Spectrum, xaxis: XAxisType = XAxisType.Unknown, **kw) -> Series | None:
     match mode:
         case Spectrum.AB:
             modestr = "Absorbance (AU)"
@@ -41,12 +41,13 @@ def read(fp: Path, name: str, mode: Spectrum, **kw) -> tuple[Series, XAxisType] 
     N = np.array(df["Wavelength (nm)"])
     A = np.array(df[modestr])
 
-    return Series(data=A, index=N, name=name), XAxisType.Wavelength_nm
+    s = Series(data=A, index=N, name=name)
+    s = spectrum_conversion(s, XAxisType.Wavelength_nm, xaxis)
+    return s
 
 
-def meta(fp: Path, name: str):
+def meta(fp: Path, name: str, mode: Spectrum, xaxis= XAxisType.Unknown, **kw) -> Series | None:
     ...
 
 
-ftype = FileType("inno_spectra", [".csv"], read, meta)
-register_filetype(ftype)
+innospectra_ftype = FileType("innospectra", [".csv"], read, meta)
