@@ -2,17 +2,33 @@ from __future__ import annotations
 from pathlib import Path
 from pandas import Series
 from .enums import Spectrum, XAxisType
-from typing import Callable
+from typing import TypeAlias
+from typing import (
+    Callable,
+    Iterator,
+    MutableMapping,
+    Any,
+    overload,
+    Iterable,
+    TYPE_CHECKING,
+)
+
+if TYPE_CHECKING:
+    from _typeshed import SupportsKeysAndGetItem
 
 _registered_filetypes: dict[str, FileType] = {}
+
+ReadMethod: TypeAlias = Callable[[Path, str, Spectrum], Series | None]
+MetaMethod: TypeAlias = Callable[[Path, str, Spectrum], Series | None]
+
 
 class FileType:
     def __init__(
         self,
         type_name: str,
         allowed_extensions: list[str] | None,
-        read_method: Callable[[Path, str, Spectrum], tuple[Series, XAxisType] | None],
-        meta_method: Callable[[Path, str], tuple[Series] | None],
+        read_method: ReadMethod,
+        meta_method: MetaMethod,
         accept_extension_rule: Callable[[str], bool] | None = None,
     ) -> None:
         self.name = type_name
@@ -20,6 +36,7 @@ class FileType:
         self.allowed_extensions = allowed_extensions
 
         self.read_method = read_method
+        self.meta_method = meta_method
 
         if accept_extension_rule is None:
 
