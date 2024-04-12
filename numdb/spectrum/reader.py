@@ -30,30 +30,28 @@ def _read_auto(
 
     if filetype is None or filetype == "auto":
         for ftype in get_filetypes():
-            if ftype.accept_extension_rule(ext):
-                read_result = ftype.read_method(fp, name, mode, **kw)
-                meta_result = ftype.meta_method(fp, name, mode, **kw)
-                if read_result is None or meta_result is None:
+            if ftype.check_ext(ext):
+                spectrum = ftype.read_method(fp, name, mode, **kw)
+                metadata = ftype.meta_method(fp, name, mode, **kw)
+                if spectrum is None or metadata is None:
                     continue
-
-                spectrum, metadata = read_result, meta_result
                 break
         else:
             raise ReadError("Unable to detect filetype")
 
     elif isinstance(filetype, (FileType, str)):
-        filetype = get_filetype(filetype)
+        ftype = get_filetype(filetype)
 
-        if filetype.accept_extension_rule(ext):
-            read_result = filetype.read_method(fp, name, mode, **kw)
-            meta_result = filetype.meta_method(fp, name, mode, **kw)
-            if read_result is None or meta_result is None:
+        if ftype.check_ext(ext):
+            spectrum = ftype.read_method(fp, name, mode, **kw)
+            metadata = ftype.meta_method(fp, name, mode, **kw)
+            if spectrum is None or metadata is None:
                 raise ReadError("File was unrecognized")
-
-            spectrum, metadata = read_result, meta_result
-
     else:
         raise ReadError("Invalid filetype specification")
+
+    metadata.index = metadata.index.map(lambda x: ftype.name + "." + x)
+    metadata["FILETYPE"] = ftype.name
 
     return spectrum, metadata
 
@@ -66,17 +64,22 @@ def read_spectrum(
     filetype: FileType | str = "auto",
     **kw,
 ) -> tuple[Series, Series]:
-    s, m = _read_auto(fp, name, mode, filetype, **kw)
+    # Merge passed kw and _read_defaults
+    _kw = merge_dict(kw, _read_defaults)
+    spectrum, metadata = _read_auto(fp, name, mode, filetype, **_kw)
 
-    _set = merge_dict(kw, _read_defaults)
-
-    s = round_spectrum(s, _set.get("roundx"), _set.get("roundy"))
-
-    if "xvalues" in _set:
-        s = interpolate_spectrum(
-            s,
-            _set.get("xvalues"),  # type: ignore
-            _set.get("interp_kind"),  # type: ignore
+    # Spectrum interpolation
+    if "xvalues" in _kw:
+        spectrum = interpolate_spectrum(
+            spectrum,
+            _kw.get("xvalues"),  # type: ignore
+            _kw.get("interp_kind"),  # type: ignore
         )
 
-    return s, m
+    # Spectrum rounding
+    spectrum = round_spectrum(spectrum, _kw.get("roundx"), _kw.get("roundy"))
+
+    # Add metadata
+    metadata["FILEPATH"] = str(fp)
+    metadata["FILENAME"] = fp.name
+    return spectrum, metadata
