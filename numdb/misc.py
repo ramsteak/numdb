@@ -5,9 +5,25 @@ _K = TypeVar("_K")
 _V = TypeVar("_V")
 
 
-def dict_merge(*ds: dict[_K, _V]) -> dict[_K, _V]:
-    """Merges the dicts into a single dict, keeping the priority in the order
-    they are specified"""
+def merge_dict(*ds: dict[_K, _V]) -> dict[_K, _V]:
+    """The function merges the given dicts into a single dict. In case of key
+    collisions the function keeps the value in the first dict where the key is found.
+
+    Args:
+        dict[_K, _V]: The dicts to merge
+
+    Returns:
+        dict[_K, _V]: The merged dict
+
+    Notes:
+        If no dict is passed returns an empty dict.
+
+    Example:
+        >>> a = {"one":1, "two":2}
+        >>> b = {"two":3, "tre":3}
+        >>> merge_dict(a, b)
+        {'two': 2, 'tre': 3, 'one': 1}
+    """
     merged = {}
     for d in reversed(ds):
         merged.update(d)

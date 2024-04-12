@@ -3,11 +3,11 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/numdb"]
+packages = ["numdb"]
 
 [project]
 name = "numdb"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="ramsteak", email="ramsteak.git@gmail.com" },
 ]

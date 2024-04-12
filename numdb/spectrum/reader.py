@@ -9,7 +9,7 @@ from pandas import Index, Series
 from scipy.interpolate import interp1d
 
 from ..exceptions import ReadError
-from ..misc import dict_merge
+from ..misc import merge_dict
 from .conversions import interpolate_spectrum, round_spectrum, spectrum_conversion
 from .enums import Spectrum, XAxisType
 from .filetypes import FileType, _registered_filetypes
@@ -72,7 +72,7 @@ def read_spectrum(
 ) -> tuple[Series, Series]:
     s, m = _read_auto(fp, name, mode, filetype, **kw)
 
-    _set = dict_merge(kw, _read_defaults)
+    _set = merge_dict(kw, _read_defaults)
 
     s = round_spectrum(s, _set.get("roundx"), _set.get("roundy"))
 
