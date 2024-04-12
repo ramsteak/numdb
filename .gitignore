@@ -1,4 +1,5 @@
 _test*.py
+_§*.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
