@@ -8,6 +8,7 @@ from struct import error
 from ..filetypes import FileType
 from typing import Any
 from ..conversions import spectrum_conversion
+from ...misc import flatten_dict
 
 
 def _get_modestr(mode: Spectrum) -> str:
@@ -61,7 +62,7 @@ def read(
 
 def meta(fp: Path, name: str, mode: Spectrum = Spectrum.AB, **kw) -> Series | None:
     modestr = _get_modestr(mode)
-    meta: dict[str, Any] = {}
+    meta = {}
 
     try:
         opus = read_file(str(fp))
@@ -70,9 +71,21 @@ def meta(fp: Path, name: str, mode: Spectrum = Spectrum.AB, **kw) -> Series | No
     except (KeyError, error):
         return None
 
-    return Series()
+    # Add all raw meta attributes to meta dict, without any array data
+    raw_meta = {
+        k: v for k, v in flatten_dict(opus).items() if not isinstance(v, np.ndarray)
+    }
+    # Remove this key, binary encoded string
+    raw_meta.pop("Text Information")
+    raw_meta.pop("History")
+
+    meta.update(raw_meta)
+
+    return Series(meta, name=name)
 
 
-opus_ftype = FileType(
-    "opus", None, read, meta, lambda x: x.removeprefix(".").isnumeric()
-)
+def numericextension(ext: str) -> bool:
+    return ext.removeprefix(".").isnumeric()
+
+
+opus_ftype = FileType("opus", None, read, meta, numericextension)
