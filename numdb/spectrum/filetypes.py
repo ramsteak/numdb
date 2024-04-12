@@ -30,19 +30,15 @@ class FileType:
         self.read_method = read_method
         self.meta_method = meta_method
 
-        if accept_extension_rule is None:
+        self.accept_extension_rule = accept_extension_rule
 
-            def _aer(e: str, /) -> bool:
-                if self.allowed_extensions is None:
-                    return False
-                return e in self.allowed_extensions
-
-            self.accept_extension_rule = _aer
-
-        elif callable(accept_extension_rule):
-            self.accept_extension_rule = accept_extension_rule
-        else:
-            raise ValueError("Invalid accept extension rule")
+    def check_ext(self, ext: str) -> bool:
+        if self.allowed_extensions is not None:
+            if ext in self.allowed_extensions:
+                return True
+        if self.accept_extension_rule is not None:
+            return self.accept_extension_rule(ext)
+        return False
 
 
 class KeyCollisionError(Exception):
