@@ -1,9 +1,11 @@
-from pathlib import Path
-from ..enums import XAxisType, Spectrum
-from pandas import Series, read_csv
-import numpy as np
 from io import StringIO
+from pathlib import Path
+
+import numpy as np
+from pandas import Series, read_csv
+
 from ..conversions import spectrum_conversion
+from ..enums import Spectrum, XAxisType
 from ..filetypes import FileType
 
 

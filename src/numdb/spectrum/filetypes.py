@@ -1,17 +1,20 @@
 from __future__ import annotations
+
 from pathlib import Path
-from pandas import Series
-from .enums import Spectrum, XAxisType
-from typing import TypeAlias
 from typing import (
+    TYPE_CHECKING,
+    Any,
     Callable,
+    Iterable,
     Iterator,
     MutableMapping,
-    Any,
+    TypeAlias,
     overload,
-    Iterable,
-    TYPE_CHECKING,
 )
+
+from pandas import Series
+
+from .enums import Spectrum, XAxisType
 
 if TYPE_CHECKING:
     from _typeshed import SupportsKeysAndGetItem

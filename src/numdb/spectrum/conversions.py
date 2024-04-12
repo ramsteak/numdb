@@ -1,9 +1,11 @@
 from __future__ import annotations
-from pandas import Series, Index
-from .enums import XAxisType
-from numpy import typing as npt
+
 import numpy as np
+from numpy import typing as npt
+from pandas import Index, Series
 from scipy.interpolate import interp1d
+
+from .enums import XAxisType
 
 
 def spectrum_conversion(

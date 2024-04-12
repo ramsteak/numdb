@@ -1,16 +1,18 @@
 from __future__ import annotations
-from pathlib import Path
-from pandas import Series, Index
-from .enums import Spectrum, XAxisType
-from ..exceptions import ReadError
-from .filetypes import FileType, _registered_filetypes
-from numpy import typing as npt
-import numpy as np
-from scipy.interpolate import interp1d
-from .conversions import interpolate_spectrum, round_spectrum, spectrum_conversion
-from typing import Any
-from ..misc import dict_merge
 
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+from numpy import typing as npt
+from pandas import Index, Series
+from scipy.interpolate import interp1d
+
+from ..exceptions import ReadError
+from ..misc import dict_merge
+from .conversions import interpolate_spectrum, round_spectrum, spectrum_conversion
+from .enums import Spectrum, XAxisType
+from .filetypes import FileType, _registered_filetypes
 
 _read_defaults: dict[str, Any] = {
     "xaxis": XAxisType.Unknown,

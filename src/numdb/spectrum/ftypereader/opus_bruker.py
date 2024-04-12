@@ -1,14 +1,16 @@
-from brukeropusreader import read_file
 from pathlib import Path
-from ..enums import XAxisType, Spectrum
-from pandas import Series
-import numpy as np
-from numpy import typing as npt
 from struct import error
-from ..filetypes import FileType
 from typing import Any
-from ..conversions import spectrum_conversion
+
+import numpy as np
+from brukeropusreader import read_file
+from numpy import typing as npt
+from pandas import Series
+
 from ...misc import flatten_dict
+from ..conversions import spectrum_conversion
+from ..enums import Spectrum, XAxisType
+from ..filetypes import FileType
 
 
 def _get_modestr(mode: Spectrum) -> str:

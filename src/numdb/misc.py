@@ -1,4 +1,4 @@
-from typing import TypeVar, Mapping, Any, Iterable
+from typing import Any, Iterable, Mapping, TypeVar
 
 _T = TypeVar("_T")
 _K = TypeVar("_K")
