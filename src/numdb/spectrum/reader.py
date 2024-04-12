@@ -26,17 +26,18 @@ def _read_auto(
     mode: Spectrum,
     filetype: None | str | FileType = None,
     **kw,
-) -> Series:
+) -> tuple[Series, Series]:
     ext = fp.suffix.lower()
 
     if filetype is None or filetype == "auto":
         for _, ftype in _registered_filetypes.items():
             if ftype.accept_extension_rule(ext):
                 read_result = ftype.read_method(fp, name, mode, **kw)
-                if read_result is None:
+                meta_result = ftype.meta_method(fp, name, mode, **kw)
+                if read_result is None or meta_result is None:
                     continue
 
-                spectrum = read_result
+                spectrum, metadata = read_result, meta_result
                 break
         else:
             raise ReadError("Unable to detect filetype")
@@ -47,15 +48,16 @@ def _read_auto(
 
         if filetype.accept_extension_rule(ext):
             read_result = filetype.read_method(fp, name, mode, **kw)
-            if read_result is None:
+            meta_result = filetype.meta_method(fp, name, mode, **kw)
+            if read_result is None or meta_result is None:
                 raise ReadError("File was unrecognized")
 
-            spectrum = read_result
+            spectrum, metadata = read_result, meta_result
 
     else:
         raise ReadError("Invalid filetype specification")
 
-    return spectrum
+    return spectrum, metadata
 
 
 def read_spectrum(
@@ -65,8 +67,8 @@ def read_spectrum(
     *,
     filetype: FileType | str = "auto",
     **kw,
-) -> Series:
-    s = _read_auto(fp, name, mode, filetype, **kw)
+) -> tuple[Series, Series]:
+    s, m = _read_auto(fp, name, mode, filetype, **kw)
 
     _set = dict_merge(kw, _read_defaults)
 
@@ -75,4 +77,4 @@ def read_spectrum(
     if "xvalues" in _set:
         s = interpolate_spectrum(s, _set.get("xvalues"), _set.get("interp_kind"))  # type: ignore
 
-    return s
+    return s, m
