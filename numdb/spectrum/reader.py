@@ -3,16 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-from numpy import typing as npt
-from pandas import Index, Series
-from scipy.interpolate import interp1d
+from pandas import Series
 
 from ..exceptions import ReadError
 from ..misc import merge_dict
-from .conversions import interpolate_spectrum, round_spectrum, spectrum_conversion
+from .conversions import interpolate_spectrum, round_spectrum
 from .enums import Spectrum, XAxisType
-from .filetypes import FileType, _registered_filetypes
+from .filetypes import FileType, get_filetype, get_filetypes
 
 _read_defaults: dict[str, Any] = {
     "xaxis": XAxisType.Unknown,
@@ -32,7 +29,7 @@ def _read_auto(
     ext = fp.suffix.lower()
 
     if filetype is None or filetype == "auto":
-        for _, ftype in _registered_filetypes.items():
+        for ftype in get_filetypes():
             if ftype.accept_extension_rule(ext):
                 read_result = ftype.read_method(fp, name, mode, **kw)
                 meta_result = ftype.meta_method(fp, name, mode, **kw)
@@ -45,8 +42,7 @@ def _read_auto(
             raise ReadError("Unable to detect filetype")
 
     elif isinstance(filetype, (FileType, str)):
-        if isinstance(filetype, str):
-            filetype = _registered_filetypes[filetype]
+        filetype = get_filetype(filetype)
 
         if filetype.accept_extension_rule(ext):
             read_result = filetype.read_method(fp, name, mode, **kw)
@@ -77,6 +73,10 @@ def read_spectrum(
     s = round_spectrum(s, _set.get("roundx"), _set.get("roundy"))
 
     if "xvalues" in _set:
-        s = interpolate_spectrum(s, _set.get("xvalues"), _set.get("interp_kind"))  # type: ignore
+        s = interpolate_spectrum(
+            s,
+            _set.get("xvalues"),  # type: ignore
+            _set.get("interp_kind"),  # type: ignore
+        )
 
     return s, m

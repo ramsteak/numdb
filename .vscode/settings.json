@@ -3,5 +3,11 @@
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "files.exclude": {
+        ".vscode": true,
+        ".pytest_cache": true,
+        ".ruff_cache": true,
+        "dist": true,
+    }
 }

@@ -63,12 +63,12 @@ def flatten_dict(
     nested dicts with `join_char`. Values that are not of type dict are preserved.
 
     Args:
-        `nested_dict`: the dictionaty to flatten. Keys of all nested dicts should be str.
+        `nested_dict`: the dict to flatten. Keys of all nested dicts should be str.
         `join_char`: optional, the character used to join the keys when flattening.
             default: "."
 
     Returns:
-        `dict`: The flattened dictionary
+        `dict`: The flattened dict
 
     Example:
         >>> nested_dict = {'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}

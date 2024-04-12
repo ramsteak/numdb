@@ -53,6 +53,8 @@ def round_spectrum(
 def interpolate_spectrum(
     sp: Series, xvalues: npt.ArrayLike, interp_kind: str
 ) -> Series:
-    interp = interp1d(sp.index.values, sp.values, kind=interp_kind, fill_value="extrapolate")  # type: ignore
+    interp = interp1d(
+        sp.index.values, sp.values, kind=interp_kind, fill_value="extrapolate"
+    )  # type: ignore
     s = Series(interp(xvalues), index=Index(xvalues), name=sp.name)  # type: ignore
     return s

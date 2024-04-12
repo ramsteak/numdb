@@ -1,25 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Iterable,
-    Iterator,
-    MutableMapping,
-    TypeAlias,
-    overload,
-)
+from typing import Callable, TypeAlias
 
 from pandas import Series
 
-from .enums import Spectrum, XAxisType
-
-if TYPE_CHECKING:
-    from _typeshed import SupportsKeysAndGetItem
+from .enums import Spectrum
 
 _registered_filetypes: dict[str, FileType] = {}
+_filetypes_priority: dict[str, int] = {}
 
 ReadMethod: TypeAlias = Callable[[Path, str, Spectrum], Series | None]
 MetaMethod: TypeAlias = Callable[[Path, str, Spectrum], Series | None]
@@ -60,13 +49,41 @@ class KeyCollisionError(Exception):
     ...
 
 
-def register_filetype(ftype: FileType, *, overwrite: bool = False) -> None:
+def register_filetype(
+    ftype: FileType, *, priority: int = 10, overwrite: bool = False
+) -> None:
+    """The function adds a filetype to the `_registered_filetypes` dict
+
+    Args:
+        ftype (FileType): The FileType object to be added
+        priority (int, optional): The priority of the object. FileTypes to be used as
+        fallbacks should have a priority equal to 0. Defaults to 10.
+        overwrite (bool, optional): If set, overwrites a FileType with the same name.
+        Defaults to False.
+
+    Raises:
+        KeyCollisionError: If overwrite is set to False (default) and a FileType
+        with the same name already exists.
+    """
     if not overwrite:
         if ftype.name in _registered_filetypes:
             raise KeyCollisionError(f'Key "{ftype.name}" already exists')
 
     _registered_filetypes[ftype.name] = ftype
+    _filetypes_priority[ftype.name] = priority
 
 
-def get_filetypes():
-    return _registered_filetypes.keys()
+def get_filetypes() -> list[FileType]:
+    ftypes = list(_registered_filetypes.values())
+    ftypes.sort(key=lambda f: _filetypes_priority.get(f.name, 0))
+
+    return ftypes
+
+
+def get_filetype(key: str | FileType) -> FileType:
+    if isinstance(key, str):
+        return _registered_filetypes[key]
+    elif isinstance(key, FileType):
+        return key
+    else:
+        raise ValueError(f"`{key}` is not a registered filetype")

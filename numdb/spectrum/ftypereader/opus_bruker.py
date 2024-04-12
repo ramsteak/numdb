@@ -1,6 +1,5 @@
 from pathlib import Path
 from struct import error
-from typing import Any
 
 import numpy as np
 from brukeropusreader import read_file
