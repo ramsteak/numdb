@@ -1,10 +1,13 @@
+from os.path import join
 from pathlib import Path
 from typing import Any
-from os.path import join
+
+from pandas import DataFrame, Series, concat
+
 from ..misc import get_first
-from ..spectrum.reader import ReadError
 from ..spectrum import read_spectrum
-from pandas import Series, DataFrame
+from ..spectrum.reader import ReadError
+from .metadata import _registered_metaparsers
 
 _load_defaults: dict[str, Any] = {}
 
@@ -30,7 +33,13 @@ def import_files(
         except ReadError:
             if not ignore_errors:
                 raise
-    return DataFrame(spectra), DataFrame(metadata)
+
+    df_spectra = DataFrame(spectra)
+    df_metadata = DataFrame(metadata)
+
+    addmeta = [parser(df_metadata) for parser in _registered_metaparsers]
+    df_metadata = concat((df_metadata, *addmeta), axis=1)
+    return df_spectra, df_metadata
 
 
 def resolve_npath(npath: str, root: Path | None) -> Path:

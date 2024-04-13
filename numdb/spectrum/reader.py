@@ -87,5 +87,7 @@ def read_spectrum(
     # Add metadata
     metadata["FILEPATH"] = str(fp)
     metadata["FILENAME"] = fp.name
+    metadata["FILENAME_NOEXT"] = fp.name.removesuffix(fp.suffix)
+    metadata["EXTENSION"] = fp.suffix
     metadata["MODE"] = mode.name
     return spectrum, metadata
