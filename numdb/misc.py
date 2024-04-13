@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Mapping, TypeVar
+from typing import Any, Iterable, Mapping, TypeVar, overload
 
 _T = TypeVar("_T")
 _K = TypeVar("_K")
@@ -30,28 +30,34 @@ def merge_dict(*ds: dict[_K, _V]) -> dict[_K, _V]:
     return merged
 
 
+@overload
 def get_first(
-    property: str,
-    *vs: _T | None | dict[str, _T | Any | None],
-    default: _T | None = ...,
+    property: str, *vs: _T | None | dict[str, _T | Any], default: _T | None
 ) -> _T | None:
+    ...
+
+
+@overload
+def get_first(property: str, *vs: _T | None | dict[str, _T | Any]) -> _T:
+    ...
+
+
+def get_first(property: str, *vs: _T | None | dict[str, _T | Any | None], default=...):  # type: ignore
     for item in vs:
         if item is None:
             continue
 
         if isinstance(item, Mapping):
-            if property not in item:
-                continue
-            v = item[property]
+            v = item.get(property)
             if v is None:
                 continue
             return v
 
         return item
-    else:
-        if default is ...:
-            raise ValueError(f"Property {property} not defined")
-        return default
+
+    if default is ...:
+        raise ValueError(f"Property {property} not defined")
+    return default
 
 
 def flatten_dict(
