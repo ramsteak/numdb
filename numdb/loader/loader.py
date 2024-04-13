@@ -58,5 +58,8 @@ def set_default(key: str, value: Any) -> None:
     _load_defaults[key] = value
 
 
-def set_root(path: Path) -> None:
+def set_root(path: Path | str) -> None:
+    if not isinstance(path, Path):
+        path = Path(path)
+
     _load_defaults["root"] = path
