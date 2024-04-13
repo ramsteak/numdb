@@ -37,7 +37,7 @@ def _read_auto(
                     continue
                 break
         else:
-            raise ReadError("Unable to detect filetype")
+            raise ReadError(f"Unable to detect filetype for {name}")
 
     elif isinstance(filetype, (FileType, str)):
         ftype = get_filetype(filetype)
