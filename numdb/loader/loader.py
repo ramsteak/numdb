@@ -1,0 +1,62 @@
+from pathlib import Path
+from typing import Any
+from os.path import join
+from ..misc import get_first
+from ..exceptions import ReadError
+from ..spectrum import read_spectrum
+from pandas import Series, DataFrame
+
+_load_defaults: dict[str, Any] = {}
+
+
+def import_files(
+    *npaths: str, root: Path | None = None, ignore_errors: bool = False, **kw
+) -> tuple[DataFrame, DataFrame]:
+    root = get_first("root", root, _load_defaults)
+
+    # Get the list of all files to be collected.
+    # Stored as list of (name, path)
+    files: list[tuple[str, Path]] = []
+    for ndbp, path in ((np, resolve_npath(np, root)) for np in npaths):
+        files.extend((f"{ndbp}:{p.name}", p) for p in _get_files_path(path))
+
+    spectra: list[Series] = []
+    metadata: list[Series] = []
+    for name, path in files:
+        try:
+            s, m = read_spectrum(path, name, **kw)
+            spectra.append(s)
+            metadata.append(m)
+        except ReadError:
+            if not ignore_errors:
+                raise
+    return DataFrame(spectra), DataFrame(metadata)
+
+
+def resolve_npath(npath: str, root: Path | None) -> Path:
+    pwd = get_first("root", root, _load_defaults)
+
+    for dir in npath.split(":"):
+        if (pwd / dir).is_file():
+            return pwd / dir
+        for d in (_d for _d in pwd.iterdir() if _d.is_dir()):
+            if d.name.startswith(dir):
+                break
+        else:
+            raise ValueError(f"Nonexistent folder {join(pwd, dir)}")
+        pwd = d
+    return pwd
+
+
+def _get_files_path(path: Path) -> list[Path]:
+    if path.is_dir():
+        return [f for f in path.iterdir() if f.is_file()]
+    return [path]
+
+
+def set_default(key: str, value: Any) -> None:
+    _load_defaults[key] = value
+
+
+def set_root(path: Path) -> None:
+    _load_defaults["root"] = path

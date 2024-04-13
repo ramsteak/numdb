@@ -54,7 +54,6 @@ def read(
 def meta(
     fp: Path, name: str, mode: Spectrum, xaxis=XAxisType.Unknown, **kw
 ) -> Series | None:
-    
     meta = {}
 
     return Series(meta, name=name)
