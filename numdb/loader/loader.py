@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any
 from os.path import join
 from ..misc import get_first
-from ..exceptions import ReadError
+from ..spectrum.reader import ReadError
 from ..spectrum import read_spectrum
 from pandas import Series, DataFrame
 

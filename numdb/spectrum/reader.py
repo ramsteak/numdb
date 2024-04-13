@@ -5,11 +5,16 @@ from typing import Any
 
 from pandas import Series
 
-from ..exceptions import ReadError
+# from ..exceptions import ReadError
 from ..misc import merge_dict
 from .conversions import interpolate_spectrum, round_spectrum
 from .enums import Spectrum, XAxisType
 from .filetypes import FileType, get_filetype, get_filetypes
+
+
+class ReadError(Exception):
+    ...
+
 
 _read_defaults: dict[str, Any] = {
     "xaxis": XAxisType.Unknown,
