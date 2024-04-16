@@ -4,7 +4,9 @@
 
 This project imports files, mainly spectral data, organized in a filesystem
 structure with folders with leading numbers (or any unique identifier).
-This helps with organizing files in a reasonable structure, and to import them without lengthy names or listing all files manually.
+This helps with organizing files in a reasonable structure, and to import them
+without lengthy names or listing all files manually, just by selecting the folder
+they are contained in.
 
 ```txt
 root
@@ -30,6 +32,7 @@ df,m = importfiles("02:01", "02:02", root=root)
 ## File loading
 
 The module navigates through the file tree and automatically detects the filetype.
+Additional filetypes can be registered to handle any series-like filetype.
 
 ### Custom filetypes
 
