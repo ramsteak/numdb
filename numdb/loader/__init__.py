@@ -1,8 +1,12 @@
-from .loader import import_files
-from .metadata import register_metaparser, MetaParsers
+from .loader import import_files, set_default, set_root
+from .metadata import register_metaparser, MetaParser, UnderscoreSplitter, FileReader
 
 __all__ = [
     "import_files",
     "register_metaparser",
-    "MetaParsers",
+    "MetaParser",
+    "UnderscoreSplitter",
+    "FileReader",
+    "set_default",
+    "set_root",
 ]
