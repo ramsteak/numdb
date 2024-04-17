@@ -13,7 +13,7 @@ _load_defaults: dict[str, Any] = {}
 
 
 def import_files(
-    *npaths: str, root: Path | None = None, ignore_errors: bool | None = None, **kw
+    *npaths: str, root: Path | None = None, ignore_errors: bool = False, **kw
 ) -> tuple[DataFrame, DataFrame]:
     root = get_first("root", root, _load_defaults)
 
@@ -31,7 +31,6 @@ def import_files(
             spectra.append(s)
             metadata.append(m)
         except ReadError:
-            get_first("ignore_errors", ignore_errors, _load_defaults, default=False)
             if not ignore_errors:
                 raise
 
