@@ -91,3 +91,7 @@ def read_spectrum(
     metadata["EXTENSION"] = fp.suffix
     metadata["MODE"] = mode.name
     return spectrum, metadata
+
+
+def set_reader_defaults(**kwargs) -> None:
+    _read_defaults.update(kwargs)

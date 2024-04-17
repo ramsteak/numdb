@@ -69,7 +69,7 @@ def _get_files_path(path: Path) -> list[Path]:
 #     _load_defaults[key] = value
 
 
-def set_defaults(**kwargs) -> None:
+def set_loader_defaults(**kwargs) -> None:
     _load_defaults.update(kwargs)
 
 
