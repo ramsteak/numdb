@@ -31,7 +31,9 @@ def import_files(
             spectra.append(s)
             metadata.append(m)
         except ReadError:
-            if not ignore_errors:
+            if not get_first(
+                "ignore_errors", ignore_errors, _load_defaults, default=False
+            ):
                 raise
 
     df_spectra = DataFrame(spectra)
@@ -63,8 +65,12 @@ def _get_files_path(path: Path) -> list[Path]:
     return [path]
 
 
-def set_default(key: str, value: Any) -> None:
-    _load_defaults[key] = value
+# def set_default(key: str, value: Any) -> None:
+#     _load_defaults[key] = value
+
+
+def set_defaults(**kwargs) -> None:
+    _load_defaults.update(kwargs)
 
 
 def set_root(path: Path | str) -> None:
