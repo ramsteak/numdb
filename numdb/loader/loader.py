@@ -13,7 +13,7 @@ _load_defaults: dict[str, Any] = {}
 
 
 def import_files(
-    *npaths: str, root: Path | None = None, ignore_errors: bool = False, **kw
+    *npaths: str, root: Path | None = None, ignore_errors: bool|None = None, **kw
 ) -> tuple[DataFrame, DataFrame]:
     root = get_first("root", root, _load_defaults)
 
