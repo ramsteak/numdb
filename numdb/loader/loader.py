@@ -4,7 +4,7 @@ from typing import Any
 
 from pandas import DataFrame, Series, concat
 
-from ..misc import get_first
+from ..misc import get_first, merge_dict
 from ..spectrum import read_spectrum
 from ..spectrum.reader import ReadError
 from .metadata import _registered_metaparsers
@@ -16,6 +16,7 @@ def import_files(
     *npaths: str, root: Path | None = None, ignore_errors: bool|None = None, **kw
 ) -> tuple[DataFrame, DataFrame]:
     root = get_first("root", root, _load_defaults)
+    kw = merge_dict(kw, _load_defaults)
 
     # Get the list of all files to be collected.
     # Stored as list of (name, path)
@@ -69,7 +70,7 @@ def _get_files_path(path: Path) -> list[Path]:
 #     _load_defaults[key] = value
 
 
-def set_loader_defaults(**kwargs) -> None:
+def set_defaults(**kwargs) -> None:
     _load_defaults.update(kwargs)
 
 
